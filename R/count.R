@@ -145,15 +145,22 @@ setMethod("count", "subcorpus", function(
         dts <- lapply(
           query,
           function(x){
+            cat(paste0(x, "\n"))
+            cat("region_matrix\n")
             region_matrix <- cpos(.Object = .Object, query = x, cqp = cqp, check = check, p_attribute = p_attribute)
             if (is.null(region_matrix)) return(NULL)
+            cat("token stream\n")
             token <- get_token_stream(cpos(region_matrix), corpus = .Object@corpus, p_attribute = p_attribute, encoding = .Object@encoding)
+            cat("IDs\n")
             ids <- unlist(Map(rep, 1:nrow(region_matrix), region_matrix[,2] - region_matrix[,1] + 1))
+            cat("matches\n")
             matches_cnt <- table(sapply(split(token, ids), paste, collapse = " "))
+            cat("data_table\n")
             dt <- data.table(query = x, match = names(matches_cnt), count = as.vector(unname(matches_cnt)))
             if (nrow(dt) == 0L) return(NULL)
             setorderv(dt, cols = "count", order = -1L)
             dt[, "share" := round(dt[["count"]] / sum(dt[["count"]]) * 100, 2)]
+            cat("out dt\n")
             dt
           }
         )
