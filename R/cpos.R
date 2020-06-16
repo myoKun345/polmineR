@@ -117,10 +117,13 @@ setMethod("cpos", "corpus", function(.Object, query, p_attribute = getOption("po
     hit_list <- lapply(
       query,
       function(q){
+        cat(paste0(query, "\n"))
         if (check) if (!check_cqp_query(q)) stop("Aborting - CQP query does not pass check and may cause a crash.")
         if (!RcppCWB::cqp_is_initialized()) cqp_initialize()
         cqp_query(corpus = .Object@corpus, query = q)
-        regions <- try(cqp_dump_subcorpus(corpus = .Object@corpus), silent = TRUE)
+        cat("querying\n")
+        regions <- try(cqp_dump_subcorpus(corpus = .Object@corpus), silent = F)
+        cat("subcorpus dumped\n")
         if (is(regions)[1] == "try-error"){
           .message("no hits for query: ", q, verbose = verbose)
           return( NULL )
