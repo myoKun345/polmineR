@@ -98,14 +98,18 @@ setGeneric("get_token_stream", function(.Object, ...) standardGeneric("get_token
 #' @inheritParams decode
 #' @rdname get_token_stream-method
 setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, subset = NULL, boost = NULL, encoding = NULL, collapse = NULL, beautify = TRUE, cpos = FALSE, cutoff = NULL, decode = TRUE, ...){
-  
+  cat("token stream numeric\n")
+
   if ("pAttribute" %in% names(list(...))) p_attribute <- list(...)[["pAttribute"]]
   
   # apply cutoff if length of cpos exceeds maximum number of tokens specified by cutoff
   if (!is.null(cutoff)) if (cutoff < length(.Object)) .Object <- .Object[1L:cutoff]
   
+  cat("ids start\n")
   ids <- cl_cpos2id(corpus = corpus, p_attribute = p_attribute, cpos = .Object, registry = registry())
+  cat("ids end\n")
   if (isTRUE(decode)){
+    cat("decoding\n")
     tokens <- decode(.Object = ids, corpus = corpus, p_attributes = p_attribute, boost = boost)
     rm(ids)
   } else if (isFALSE(decode)){
@@ -143,6 +147,7 @@ setMethod("get_token_stream", "numeric", function(.Object, corpus, p_attribute, 
       tokens <- paste(tokens, collapse = collapse)  
     }
   }
+  cat("return tokens\n")
   tokens
 })
 
